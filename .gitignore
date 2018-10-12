@@ -135,6 +135,8 @@ docs/_build/
 
 
 
+
+
 # PyBuilder
 
 target/
@@ -224,3 +226,5 @@ dmypy.json
 .idea
 
 test/
+lib/config.py
+log/
