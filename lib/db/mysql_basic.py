@@ -54,6 +54,11 @@ class MysqlBasic:
         self.data_list = data_list
         self.db_session.add_all(data_list)
 
+    def session_close(self):
+        self.db_session.close()
+
+
+
 
 
 def get_session():
