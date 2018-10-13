@@ -41,10 +41,7 @@ class DailyFileHandler(FileHandler):
             if self.check_base_filename():
                 self.build_base_filename()
             FileHandler.emit(self, record)
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-
+        except SystemExit:
             self.handleError(record)
 
     def check_base_filename(self):
@@ -119,7 +116,8 @@ def initlog_file(log_level=logging.INFO, filename=LoggerConfig.file_name, file_a
         try:
             handl_file_log = DailyFileHandler(filename=filename + ".log", mode="a", encoding="utf-8")
         except FileNotFoundError:
-            handl_file_log = DailyFileHandler(filename="." + os.path.sep + "crawler" + ".log", mode="a", encoding="utf-8")
+            handl_file_log = DailyFileHandler(filename="." + os.path.sep + "crawler" + ".log", mode="a",
+                                              encoding="utf-8")
         sfilter = SingleLevelFilter(logging.INFO, False)
         handl_file_log.setLevel(logging.INFO)
         handl_file_log.setFormatter(formatter)
@@ -140,6 +138,4 @@ def initlog_file(log_level=logging.INFO, filename=LoggerConfig.file_name, file_a
     s.setFormatter(formatter)
 
     logger.addHandler(s)
-
-
 
