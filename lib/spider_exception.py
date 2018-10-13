@@ -5,20 +5,15 @@
 @desc email send
 """
 import logging
+
 log = logging.getLogger()
-class spiderexception(Exception):
+
+
+class SpiderException(Exception):
     def __init__(self, m, *args):
         self.args = args
-        s = 'exception messgae is : '
+        sr = 'exception messgae is :'
         for my_info in args:
-           s = s + my_info + ","
-        s = str + "Trace message is{}:" + m
-        log.error(str)
-
-
-
-
-
-
-
-
+            sr = sr + str(my_info) + ","
+        sr = sr + "Trace message is{}:" + m
+        log.error(sr)
