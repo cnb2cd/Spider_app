@@ -18,4 +18,14 @@ class FailUrl(Base):
     url_status = Column(int(1))
     site_name = Column(String(50))
 
+    def __repr__(self):
+        format_field = f"\"task_id\":\"{self.taskid}\"" + \
+                       f",\"fail_url\":\"{self.fail_url}\"" + \
+                       f",\"url_type\":\"{self.url_type}\"" + \
+                       f",\"bulletin_way\":\"{self.bulletin_way}\"" + \
+                       f",\"req_time\":\"{self.req_time}\"" + \
+                       f",\"url_status\":\"{self.url_status}\"" + \
+                       f",\"site_name\":\"{self.site_name}\""
 
+        format_field = "{" + format_field + "}"
+        return format_field

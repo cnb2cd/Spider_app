@@ -10,7 +10,7 @@ import logging
 
 
 from .spider_exception import SpiderException
-
+from .fail_url import FailUrl
 log = logging.getLogger()
 
 header = {
@@ -25,14 +25,19 @@ header = {
 
 class HttpRequest:
 
-    def __init__(self, taskid):
+    def __init__(self, taskid,sitename):
         self.session = requests.session()
         self.taskid = taskid
         self.r = None
         self.charset = "utf-8"
+        self.type = None
+        self.sitename=sitename
 
-    def setcharset(self, char):
+    def set_charset(self, char):
         self.charset = char
+
+    def set_url_type(self, tp):
+        self.type = tp
 
     def http_session(self, url, method, **kwargs):
         try:
@@ -41,6 +46,10 @@ class HttpRequest:
         except Exception:
             m = traceback.format_exc()
             SpiderException(m, self.taskid, url)
+            fail_url=FailUrl(taskid=self.taskid, fail_url=url, url_type=self.type, req_time=1, url_status=1,
+                             site_name=self.sitename)
+
+
 
     def http_requst(self, url, method, **kwargs):
         try:
