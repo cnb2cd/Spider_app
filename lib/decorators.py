@@ -41,10 +41,3 @@ def retry(times=3, delay=0, exceptions=Exception, logger=logger):
             return _inter_retry(partial(func, *args, **kwargs), times, delay, exceptions)
         return _wraps
     return retry_oper
-
-@retry(times=3,delay=1)
-def data():
-    1/0
-
-
-data()

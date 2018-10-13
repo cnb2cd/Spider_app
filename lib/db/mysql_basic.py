@@ -22,7 +22,7 @@ port = mysql_setting.get("port")
 
 engine = create_engine(
             "mysql+pymysql://" + user + ":" + passwd + "@" + host + ":" + port + "/" + db + "?charset=" + charset,
-            pool_size=20, echo=False, pool_recycle=3600, encoding="utf-8")
+            pool_size=30, echo=False, pool_recycle=3600, encoding="utf-8")
 Base = declarative_base()
 
 
