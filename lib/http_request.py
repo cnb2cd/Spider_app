@@ -27,7 +27,7 @@ header = {
 
 class HttpRequest:
 
-    def __init__(self, taskid,sitename):
+    def __init__(self, taskid, sitename):
         self.session = requests.session()
         self.taskid = taskid
         self.r = None
@@ -53,6 +53,7 @@ class HttpRequest:
             mysql_client = MysqlBasic()
             mysql_client.session_insert(fail_url)
             mysql_client.session_commit()
+            mysql_client.session_close()
 
 
 
