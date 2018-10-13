@@ -11,6 +11,8 @@ import logging
 
 from .spider_exception import SpiderException
 from .fail_url import FailUrl
+from lib.db.mysql_basic import MysqlBasic
+
 log = logging.getLogger()
 
 header = {
@@ -48,6 +50,10 @@ class HttpRequest:
             SpiderException(m, self.taskid, url)
             fail_url=FailUrl(taskid=self.taskid, fail_url=url, url_type=self.type, req_time=1, url_status=1,
                              site_name=self.sitename)
+            mysql_client = MysqlBasic()
+            mysql_client.session_insert(fail_url)
+            mysql_client.session_commit()
+
 
 
 
