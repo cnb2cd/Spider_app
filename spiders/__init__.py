@@ -16,13 +16,13 @@ logger = logging.getLogger()
 
 class MainSpider:
 
-    def __init__(self):
+    def __init__(self, task_id):
         """
         增加了 日志类
         增加了 db_session
         """
         self.logger = logger
-        self.mysql_client = MysqlBasic()
+        self.mysql_client = MysqlBasic(task_id=task_id)
 
     def parse(self):
         pass

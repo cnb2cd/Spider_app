@@ -30,18 +30,19 @@ Base = declarative_base()
 
 class MysqlBasic:
 
-    def __init__(self):
+    def __init__(self, task_id):
         self.db_session = get_session()
         self.data_list = []
+        self.task_id = task_id
 
-    def session_commit(self, task_id):
+    def session_commit(self):
         suc = False
         try:
             self.db_session.commit()
             suc = True
         except Exception as e:
             self.db_session.rollback()
-            SpiderException(traceback.format_exc(), task_id, self.data_list)
+            SpiderException(traceback.format_exc(), self.task_id, self.data_list)
         return suc
 
     def session_insert(self, data):
@@ -56,9 +57,6 @@ class MysqlBasic:
 
     def session_close(self):
         self.db_session.close()
-
-
-
 
 
 def get_session():
