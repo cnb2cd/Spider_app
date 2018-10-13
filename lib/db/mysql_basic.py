@@ -8,7 +8,9 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import traceback
 
+from lib.spider_exception import  SpiderException
 from lib.config import mysql_setting
 if not mysql_setting:
     raise Exception("在sqlalchemy初始化的时候失败了")
@@ -30,23 +32,28 @@ class MysqlBasic:
 
     def __init__(self):
         self.db_session = get_session()
+        self.data_list = []
 
-    def session_commit(self):
+    def session_commit(self, task_id):
         suc = False
         try:
             self.db_session.commit()
             suc = True
         except Exception as e:
             self.db_session.rollback()
-            raise e
+            SpiderException(traceback.format_exc(), task_id, self.data_list)
         return suc
 
     def session_insert(self, data):
+        self.data_list = []
+        self.data_list.append(data)
         self.db_session.add(data)
 
     def session_insert_list(self, data_list):
-        for data in data_list:
-            self.session_insert(data)
+        self.data_list = []
+        self.data_list = data_list
+        self.db_session.add_all(data_list)
+
 
 
 def get_session():
