@@ -50,6 +50,7 @@ class HttpRequest:
             m = traceback.format_exc()
             SpiderException(m, self.taskid, url)
 
+
     def parse_html(self):
         print(self.charset)
         return self.r.content.decode(self.charset, 'ignore').replace(u'\xa9', u'')
