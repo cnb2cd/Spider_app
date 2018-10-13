@@ -14,7 +14,7 @@ initlog_file()
 logger = logging.getLogger()
 
 
-class Spider:
+class MainSpider:
 
     def __init__(self):
         """
