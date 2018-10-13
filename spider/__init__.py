@@ -17,8 +17,15 @@ logger = logging.getLogger()
 class Spider:
 
     def __init__(self):
+        """
+        增加了 日志类
+        增加了 db_session
+        """
         self.logger = logger
         self.db_session = get_session()
 
     def parse(self):
+        pass
+
+    def added_parse(self):
         pass
