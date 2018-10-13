@@ -16,6 +16,7 @@ class Spider(MainSpider):
     def __init__(self):
         MainSpider.__init__(self)
         self.http = HttpRequest("")
+        self.mysql_client.session_commit()
 
     def parse(self):
         pass
