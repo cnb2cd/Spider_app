@@ -11,6 +11,8 @@ from lib.http_request import HttpRequest
 
 class Spider(MainSpider):
 
+    task_id = ""
+
     def __init__(self):
         MainSpider.__init__(self)
         self.http = HttpRequest("")

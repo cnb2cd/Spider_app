@@ -8,7 +8,7 @@
 import logging
 
 from lib.logger_magic import initlog_file
-from lib.db.mysql_basic import get_session
+from lib.db.mysql_basic import MysqlBasic
 
 initlog_file()
 logger = logging.getLogger()
@@ -22,7 +22,7 @@ class MainSpider:
         增加了 db_session
         """
         self.logger = logger
-        self.db_session = get_session()
+        self.mysql_client = MysqlBasic()
 
     def parse(self):
         pass

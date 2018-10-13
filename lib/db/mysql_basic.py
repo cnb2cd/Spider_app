@@ -26,6 +26,29 @@ engine = create_engine(
 Base = declarative_base()
 
 
+class MysqlBasic:
+
+    def __init__(self):
+        self.db_session = get_session()
+
+    def session_commit(self):
+        suc = False
+        try:
+            self.db_session.commit()
+            suc = True
+        except Exception as e:
+            self.db_session.rollback()
+            raise e
+        return suc
+
+    def session_insert(self, data):
+        self.db_session.add(data)
+
+    def session_insert_list(self, data_list):
+        for data in data_list:
+            self.session_insert(data)
+
+
 def get_session():
     Base.metadata.create_all(engine)
     session_m = sessionmaker(bind=engine)
@@ -33,13 +56,6 @@ def get_session():
     return session
 
 
-def db_session_commit(session):
-    suc = False
-    try:
-        session.commit()
-        suc = True
-    except Exception as e:
-        session.rollback()
-        raise e
-    return suc
+
+
 
