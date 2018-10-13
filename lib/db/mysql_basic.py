@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import traceback
 
-from lib.spider_exception import  SpiderException
+from lib.spider_exception import SpiderException
 from lib.config import mysql_setting
 if not mysql_setting:
     raise Exception("在sqlalchemy初始化的时候失败了")
