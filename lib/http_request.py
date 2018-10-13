@@ -33,7 +33,7 @@ class HttpRequest:
         self.r = None
         self.charset = "utf-8"
         self.type = None
-        self.sitename=sitename
+        self.sitename = sitename
 
     def set_charset(self, char):
         self.charset = char
@@ -48,15 +48,12 @@ class HttpRequest:
         except Exception:
             m = traceback.format_exc()
             SpiderException(m, self.taskid, url)
-            fail_url=FailUrl(taskid=self.taskid, fail_url=url, url_type=self.type, req_time=1, url_status=1,
+            fail_url = FailUrl(taskid=self.taskid, fail_url=url, url_type=self.type, req_time=1, url_status=1,
                              site_name=self.sitename)
             mysql_client = MysqlBasic()
             mysql_client.session_insert(fail_url)
             mysql_client.session_commit()
             mysql_client.session_close()
-
-
-
 
     def http_requst(self, url, method, **kwargs):
         try:
