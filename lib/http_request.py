@@ -28,6 +28,7 @@ class httprequest:
             spiderexception(m, self.taskid, url)
 
 
+
     def http_requst(self, url, method, **kwargs):
         try:
             r = requests.request(method, url, **kwargs)
