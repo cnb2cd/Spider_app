@@ -34,6 +34,7 @@ class HttpRequest:
         self.charset = "utf-8"
         self.type = None
         self.sitename = sitename
+        self.headers = header
 
     def set_charset(self, char):
         self.charset = char

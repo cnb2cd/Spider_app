@@ -7,15 +7,17 @@
 from lib.db.mysql_basic import Base
 from sqlalchemy import Column, Integer, String, DATE
 
+
 class FailUrl(Base):
 
     __tablename__ = 'gov_bulletin_fail_url'
 
+    seriono = Column(Integer, primary_key=True)
     taskid = Column(String(50))
     fail_url = Column(String(300))
     url_type = Column(String(10))
-    req_time = Column(int(10))
-    url_status = Column(int(1))
+    req_time = Column(Integer())
+    url_status = Column(Integer())
     site_name = Column(String(50))
 
     def __repr__(self):
