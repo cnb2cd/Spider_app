@@ -66,8 +66,7 @@ class HttpRequest:
 
 
     def parse_html(self):
-        print(self.charset)
-        return self.r.content.decode(self.charset, 'ignore').replace(u'\xa9', u'')
+        return self.r.content.decode(self.charset, 'ignore').replace(u'\xa9', u'').replace('&nbsp;', '')
 
     def parse_json(self):
         return self.r.json()
