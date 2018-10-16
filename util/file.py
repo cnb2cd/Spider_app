@@ -5,7 +5,7 @@
 @desc
 """
 
-file_path = 'C:/Users/82677/PycharmProjects/Spider_app/content/'
+file_path = '../content/'
 
 
 def file_out(file, content):
