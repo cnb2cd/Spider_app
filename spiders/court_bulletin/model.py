@@ -33,6 +33,8 @@ class BulletinCourt(Base):
     court_status = Column(String(50))
     party = Column(String(400))
     site_name = Column(String(50))
+    case_type = Column(String(50))
+
 
     def __repr__(self):
         format_field = f"\"task_id\":\"{self.taskid}\"" + \
@@ -52,7 +54,8 @@ class BulletinCourt(Base):
                        f",\"court_end_t\":\"{self.court_end_t}\"" + \
                        f",\"court_status\":\"{self.court_status}\"" + \
                        f",\"party\":\"{self.party}\"" + \
-                       f",\"site_name\":\"{self.site_name}\""
+                       f",\"site_name\":\"{self.site_name}\"" + \
+                       f",\"case_type\":\"{self.case_type}\""
         format_field = "{" + format_field + "}"
         return format_field
 
