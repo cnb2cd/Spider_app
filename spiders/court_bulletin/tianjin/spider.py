@@ -29,13 +29,14 @@ class Spider(MainSpider):
 
     def parse(self):
         log.info('开始抓取==================天津法院网')
-        ct =0
-        while ( ct < 30):
+        ct = 0
+        while ct < 30:
             self.http.http_session(self.url, 'get', headers=self.http.headers)
             try:
                 r = self.http.parse_html()
                 p_list = self.parse_list(r)
                 ic = self.is_c(r)
+                object_list = list()
                 for i in p_list:
                     try:
                         d_url = 'http://tjfy.chinacourt.org' + i['det_url']
@@ -48,19 +49,21 @@ class Spider(MainSpider):
                         i.pop('det_url')
                         i.pop('html')
                         b = BulletinCourt(**i)
+                        object_list.append(b)
                         break
                     except Exception:
                         m = traceback.format_exc()
                         SpiderException(m, self.taskid, self.site_name, self.url)
-
-                if( ic == 0):
+                self.mysql_client.session_insert_list(object_list)
+                self.mysql_client.session_commit()
+                if ic == 0:
                     break
             except Exception:
                 m = traceback.format_exc()
                 SpiderException(m, self.taskid, self.site_name, self.url)
-            ct = ct + 1
+            ct += 1
             break
-
+        self.mysql_client.session_close()
     def added_parse(self):
         pass
 
