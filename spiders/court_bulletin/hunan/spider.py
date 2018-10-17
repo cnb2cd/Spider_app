@@ -1,7 +1,7 @@
 # --*-- coding:utf-8 --*--
 """
 @author wq
-@time  2018/10/17 10:50
+@time  2018/10/17 15:09
 @desc
 """
 
@@ -25,57 +25,51 @@ headers = {
     "Accept-Language": "zh-CN,zh;q=0.9",
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
-    "Host": "www.shanxify.gov.cn",
+    "Host": "hunanfy.chinacourt.org",
     "Pragma": "no-cache",
-    "Referer": "http://www.shanxify.gov.cn/ktggPage.jspx?channelId=307&listsize=238&pagego=234",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ("
-                  "KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36"
     }
 
 class Spider(MainSpider):
 
     def __init__(self):
-        self.task_id = "shanxi"
-        self.site_name = "山西法院诉讼服务网"
+        self.task_id = "hunan"
+        self.site_name = "湖南法院网"
         MainSpider.__init__(self, task_id=self.task_id)
         self.http = HttpRequest(self.task_id, self.site_name)
         self.headers = headers
 
     def parse(self):
-        form = {
-            "channelId": "307",
-            "listsize": "238",
-            "pagego": "1"
-        }
-
-        url = "http://www.shanxify.gov.cn/ktggPage.jspx"
-        log.info("开始抓取==============山西法院诉讼服务网")
-        log.info("开始抓取==============山西法院诉讼服务网,第{}页".format(str(form['pagego'])))
-        self.http.http_session(url, "post", data=form, headers=self.headers)
+        page = 1
+        url = "http://hunanfy.chinacourt.org/article/index/id/M0jONTAwNzAwNCACAAA/page/{}.shtml".format(page)
+        log.info("开始抓取==============湖南法院网")
+        log.info("开始抓取==============湖南法院网,第{}页".format(page))
+        self.http.http_session(url, "get", headers=self.headers)
         if self.http.res_code() == 200:
             html_data = self.http.parse_html()
             object_list, total_page = self.parse_html(html_data)
-            log.info("开始存储==============山西法院诉讼服务网,第{}页".format(str(form['pagego'])))
+            log.info("开始存储==============山西法院诉讼服务网,第{}页".format(page))
             # 将对象列表插入数据库
             self.mysql_client.session_insert_list(object_list)
             # 提交
             self.mysql_client.session_commit()
             for i in range(2, int(total_page)+1):
+                page = i
                 try:
-                    form["pagego"] = i
-                    log.info("开始抓取==============山西法院诉讼服务网,第{}页".format(i))
-                    self.http.http_session(url, "post", data=form, headers=self.headers)
+                    log.info("开始抓取==============湖南法院网,第{}页".format(page))
+                    url = url = "http://hunanfy.chinacourt.org/article/index/id/M0jONTAwNzAwNCACAAA/page/{}.shtml".format(page)
+                    self.http.http_session(url, "get", headers=self.headers)
                     if self.http.res_code() == 200:
                         html_data = self.http.parse_html()
                         object_list, total_page = self.parse_html(html_data)
-                        log.info("开始存储==============湖北省高级人民法院,第{}页".format(i))
+                        log.info("开始存储==============山西法院诉讼服务网,第{}页".format(page))
                         # 将对象列表插入数据库
                         self.mysql_client.session_insert_list(object_list)
                         # 提交
                         self.mysql_client.session_commit()
                     else:
-                        SpiderException("抓取山西法院诉讼服务网,第{}页异常".format(i), self.task_id, url, self.site_name)
+                        SpiderException("湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
                 except Exception:
                     # 捕获异常
                     m = traceback.format_exc()
@@ -83,12 +77,11 @@ class Spider(MainSpider):
                 # 目前为测试状态，只抓取前两页内容，正式上线前将break删掉
                 break
 
-
         else:
-            SpiderException("抓取山西法院诉讼服务网,第{}页异常".format(str(form['pagego'])), self.task_id, url, self.site_name)
+            SpiderException("湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
         # 关闭数据库链接
         self.mysql_client.session_close()
-        log.info("抓取山西法院诉讼服务网结束")
+        log.info("抓取湖南法院网结束")
 
 
     def parse_html(self, html):
@@ -99,37 +92,37 @@ class Spider(MainSpider):
         # 将获取的html写入文件
         file_out(t_way, str(html))
         doc = pq(html)
-        total_page = int(doc('a.zt_02').text()[-3:])
-        lis = doc('div.text ul li a').items()
+        page_lis = doc('a').items()
+        for pag in page_lis:
+            if pag.text() == "尾页":
+                total_page = "".join(re.findall("(\d*.shtml)", pag.attr.href)).replace(".shtml", "")
+        lis = doc('div.font14 li').items()
         # 创建对象列表
         object_list = list()
         for x in lis:
             # 创建item字典
             item = dict()
-            self.http.http_session(x.attr.href, "post", headers=self.headers)
+            item["release_date"] = x('span.right').text()
+            self.http.http_session("http://hunanfy.chinacourt.org" + x('a').attr.href, "get", headers=self.headers)
             html = self.http.parse_html()
             doc = pq(html)
-            content = doc('div.text')
+            content = doc('div.detail')
             item["taskid"] = self.task_id
-            item["release_date"] = content('h2').text()[3:13]
-            item["title"] = content('h1').text()
-            item["bulletin_way"] = t_way
-            item["court_y"] = "".join(re.findall("(在.*院)", content('h1').text())).replace("在", "")
-            item["court_t"] = "".join(re.findall("(院.*庭)", content('h1').text())).replace("院", "").replace("开庭", "")
-            item["start_court_t"] = x.text()[:16]
-            if u"刑事" in item["title"]:
-                item["defendant"] = "".join(re.findall("(审理.*)", content('p').text().replace(
-                    "\xa0\xa0", ""))).replace("审理", "")
-            else:
-                item["plaintiff"] = "".join(re.findall("(审理.*诉)", content('p').text().replace(
-                    "\xa0\xa0", ""))).replace("审理", "").replace("诉", "")
-                item["defendant"] = "".join(re.findall("(诉.*等)", content('p').text().replace(
-                    "\xa0\xa0", ""))).replace("诉", "").replace("等", "")
+            item["title"] = content('div.detail_bigtitle').text()
+            item["court_y"] = "".join(re.findall("在.*法院", content('div.detail_txt').text())).replace("在", "")
+            item["court_t"] = "".join(re.findall("刑.*庭", content('div.detail_txt').text()))
+            item["start_court_t"] = "".join(re.findall("本院定于\d{4}年.{1,5}日", content('div.detail_txt').text())).replace(
+                "年", "-").replace("月", "-").replace("日", "").replace("本院定于", "")
+            item["court_num"] = "".join(re.findall("审理.*号", content('div.detail_txt').text())).replace("审理", "")
+            item["trial_cause"] = "".join(re.findall("合议庭成员.*\s", content('div.detail_txt').text())).replace(
+                "合议庭成员：", "").replace("\n", "")
+            item["court_part"] = "".join(re.findall("在.*法院", content('div.detail_txt').text())).replace("在", "")
             item['site_name'] = self.site_name
+
             # 将item字典映射成对象
             b = BulletinCourt(**item)
             object_list.append(b)
-            # 返回对象列表和总页数
+        # 返回对象列表和总页数
         return object_list, total_page
 
 
@@ -138,3 +131,5 @@ if __name__ == "__main__":
 
     hubei_spider = Spider()
     hubei_spider.parse()
+
+
