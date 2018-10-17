@@ -28,7 +28,7 @@ headers = {
     'Cache-Control': 'no-cache',
     'Accept': 'application/json, text/javascript, */*; q=0.01',
     'Origin': 'http://www.jxfy.gov.cn',
-    'X-Requested-With': 'XMLHttpRequest',
+    'X-Requested-With':'XMLHttpRequest',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ('
                   'KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36',
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -92,10 +92,9 @@ class Spider(MainSpider):
                     SpiderException(m, self.task_id, url, self.site_name)
                 # 目前为测试状态，只抓取前两页内容，正式上线前将break删掉
                 break
-
+            self.mysql_client.session_close()
         else:
             SpiderException("抓取json异常", self.task_id, url, self.site_name)
-        self.mysql_client.session_close()
 
 
     def added_parse(self):
