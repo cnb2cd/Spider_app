@@ -32,8 +32,8 @@ class Spider(MainSpider):
     def parse(self):
         log.info('开始抓取天津法院网')
         ct = 1
-        while ct < 3:
-            log.info('开始抓取天津法院网第{page}信息'.format(page=str(ct)))
+        while ct < 30:
+            log.info('开始抓取天津法院网第{page}页信息'.format(page=str(ct)))
             self.http.http_session(self.url.format(page=str(ct)), 'get', headers=self.http.headers)
             try:
                 r = self.http.parse_html()
