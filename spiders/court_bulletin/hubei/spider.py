@@ -117,7 +117,7 @@ class Spider(MainSpider):
                 "年", "-").replace("月", "-").replace("日", "")
             item["plaintiff"] = "".join(re.findall("(原告:.*;)", content('p').text())).replace("原告:", "")
             item["defendant"] = "".join(re.findall("(被告:.*的)", content('p').text())).replace("被告:", "").replace("的", "")
-            item["site_name"] = "湖北省高级人民法院"
+            item["site_name"] = self.site_name
             # 将item字典映射成对象
             b = BulletinCourt(**item)
             object_list.append(b)
