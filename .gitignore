@@ -37,6 +37,8 @@ parts/
 
 sdist/
 
+content/
+
 var/
 
 wheels/
