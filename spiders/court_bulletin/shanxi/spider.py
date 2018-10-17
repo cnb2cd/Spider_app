@@ -69,7 +69,7 @@ class Spider(MainSpider):
                     if self.http.res_code() == 200:
                         html_data = self.http.parse_html()
                         object_list, total_page = self.parse_html(html_data)
-                        log.info("开始存储==============湖北省高级人民法院,第{}页".format(i))
+                        log.info("开始存储==============抓取山西法院诉讼服务网,第{}页".format(i))
                         # 将对象列表插入数据库
                         self.mysql_client.session_insert_list(object_list)
                         # 提交
