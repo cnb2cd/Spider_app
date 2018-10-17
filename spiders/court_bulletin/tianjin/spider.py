@@ -37,13 +37,14 @@ class Spider(MainSpider):
             self.http.http_session(self.url.format(page=str(ct)), 'get', headers=self.http.headers)
             try:
                 r = self.http.parse_html()
+                log.info('解析天津法院网第{page}页信息'.format(page=str(ct)))
                 p_list = self.parse_list(r)
                 ic = self.is_c(r)
                 object_list = list()
                 for i in p_list:
                     try:
                         log.info('开始抓取天津法院网第{page},第{strip}条信息'.format(page=str(ct),
-                                                                       strip=str(p_list.index(i))))
+                                                                       strip=str(p_list.index(i)+1)))
                         d_url = 'http://tjfy.chinacourt.org' + i['det_url']
                         self.http.http_session(d_url, 'get', headers=self.http.headers)
                         rl = self.http.parse_html()
