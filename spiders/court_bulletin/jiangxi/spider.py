@@ -7,6 +7,7 @@
 """
 
 
+import time
 from spiders import MainSpider
 from lib.http_request import HttpRequest
 from util.date_parse import get_today_date
@@ -14,23 +15,25 @@ from spiders.court_bulletin.model import BulletinCourt
 from lib.spider_exception import SpiderException
 import traceback
 import logging
+from util.file import file_out
 
 
 log = logging.getLogger()
 
 headers = {
-    'Host':'www.jxfy.gov.cn',
-    'Connection':'keep-alive',
-    'Content-Length':'173',
-    'Pragma':'no-cache',
-    'Cache-Control':'no-cache',
-    'Accept':'application/json, text/javascript, */*; q=0.01',
-    'Origin':'http://www.jxfy.gov.cn',
+    'Host': 'www.jxfy.gov.cn',
+    'Connection': 'keep-alive',
+    'Content-Length': '173',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Origin': 'http://www.jxfy.gov.cn',
     'X-Requested-With':'XMLHttpRequest',
-    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36',
-    'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
-    'Referer':'http://www.jxfy.gov.cn/tingshen/list.jsp?nid=5348&filterform=true&live=false',
-    'Accept-Language':'zh-CN,zh;q=0.9'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ('
+                  'KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'Referer': 'http://www.jxfy.gov.cn/tingshen/list.jsp?nid=5348&filterform=true&live=false',
+    'Accept-Language': 'zh-CN,zh;q=0.9'
 }
 
 
@@ -60,12 +63,12 @@ class Spider(MainSpider):
 
         url = "http://www.jxfy.gov.cn/api.do?method=ttrialliveliveinfo!listAjaxp.action"
         log.info("开始抓取==============江西庭审公开网")
-        log.info("开始抓取==============江西庭审公开网")
+        log.info("开始抓取==============江西庭审公开网,第{}页".format(str(form['page.pageNo'])))
         self.http.http_session(url, "post", data=form, headers=self.headers)
 
         if self.http.res_code() == 200:
             json_data = self.http.parse_json()
-            object_list = self.parse_list(json_data)
+            object_list = self.parse_list(json_data, form)
             self.mysql_client.session_insert_list(object_list)
             self.mysql_client.session_commit()
             total_page = self.get_total_page(json_data)
@@ -94,9 +97,11 @@ class Spider(MainSpider):
     def added_parse(self):
         pass
 
-    def parse_list(self, json_data):
+    def parse_list(self, json_data, form):
         # 解析获取到的json
-
+        log.info("开始解析江西庭审公开网第{}页".format(str(form['page.pageNo'])))
+        t_way = self.task_id + str(time.time()) + '.txt'
+        file_out(t_way, json_data)
         object_list = list()
         case_list = json_data["message"]["result"]
         for case in case_list:
@@ -122,13 +127,7 @@ class Spider(MainSpider):
                 item["defendant"] = case.get("litigants")
 
             item["site_name"] = self.site_name  # 网站名称
-
-            # remarks = get_content(case.get("remarks"))
-            # item["bulletin_way"] = "案件:" + item["title"] + ";归属法院：" + item["court_y"] + ";案号：" + item[
-            #     "court_num"] + ";案件类型：" + case["caseTypeString"] + ";承办法官：" + item[
-            #     "trial_cause"] + ";当事人：" + item["party"] + ";开庭地点：" + item[
-            #     "court_part"] + ";开庭时间：" + item["start_court_t"] + ";案件内容：" + remarks  # 公告内容
-
+            item['bulletin_way'] = t_way
             b = BulletinCourt(**item)
             object_list.append(b)
         return object_list
