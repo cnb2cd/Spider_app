@@ -15,12 +15,12 @@ f.close()
 
 def today_date(rst):
     doc = pq(rst)
-    ct = doc('div.ggnr')
-    h2 = ct('h2').text()
-    h3 = ct('h3').text()
-    p = ct('p').text()
-    t1 = ct('div.text-01').text()
-    t2 = ct('div.text-02').text()
+    con = doc('div.ggnr')
+    h2 = con('h2').text()
+    h3 = con('h3').text()
+    p = con('p').text()
+    t1 = con('div.text-01').text()
+    t2 = con('div.text-02').text()
     html = h2 + '\r\n' + h3 + '\r\n' + p + '\r\n' + t1 + '\r\n' + t2
     print(html)
 
