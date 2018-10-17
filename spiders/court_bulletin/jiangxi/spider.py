@@ -60,7 +60,7 @@ class Spider(MainSpider):
 
         url = "http://www.jxfy.gov.cn/api.do?method=ttrialliveliveinfo!listAjaxp.action"
         log.info("开始抓取==============江西庭审公开网")
-
+        log.info("开始抓取==============江西庭审公开网")
         self.http.http_session(url, "post", data=form, headers=self.headers)
 
         if self.http.res_code() == 200:
