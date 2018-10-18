@@ -85,7 +85,8 @@ class Spider(MainSpider):
                         self.mysql_client.session_insert_list(object_list)
                         self.mysql_client.session_commit()
                     else:
-                        SpiderException("抓取json异常", self.task_id, url, self.site_name)
+                        SpiderException("抓取json江西庭审公开网,第{}页异常".format(str(form['page.pageNo'])
+                                                                      ), self.task_id, url, self.site_name)
 
                 except Exception:
                     m = traceback.format_exc()
@@ -94,7 +95,8 @@ class Spider(MainSpider):
                 break
             self.mysql_client.session_close()
         else:
-            SpiderException("抓取json异常", self.task_id, url, self.site_name)
+            SpiderException("抓取json江西庭审公开网,第{}页异常".format(str(form['page.pageNo'])
+                                                          ), self.task_id, url, self.site_name)
 
 
     def added_parse(self):
