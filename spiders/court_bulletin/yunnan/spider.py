@@ -90,7 +90,7 @@ class Spider(MainSpider):
             SpiderException("抓取{},第{}页异常".format(self.site_name, (form['pagego'])), self.task_id, url, self.site_name)
         # 关闭数据库链接
         self.mysql_client.session_close()
-        log.info("抓取结束".format(self.site_name))
+        log.info("抓取{}结束".format(self.site_name))
 
 
     def added_parse(self):
