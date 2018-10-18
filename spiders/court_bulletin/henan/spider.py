@@ -147,5 +147,5 @@ class Spider(MainSpider):
 
 if __name__ == "__main__":
 
-    hubei_spider = Spider()
-    hubei_spider.parse()
+    henan_spider = Spider()
+    henan_spider.parse()
