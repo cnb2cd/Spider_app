@@ -62,7 +62,7 @@ class HttpRequest:
             self.r = r
         except Exception :
             m = traceback.format_exc()
-            SpiderException(m, self.taskid, url)
+            SpiderException(m, self.taskid, url, '链接请求异常')
 
 
     def parse_html(self):

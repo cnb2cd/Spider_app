@@ -13,18 +13,35 @@ rst = r.replace('&nbsp;', '')
 f.close()
 
 
-def today_date(rst):
-    doc = pq(rst)
-    con = doc('div.ggnr')
-    h2 = con('h2').text()
-    h3 = con('h3').text()
-    p = con('p').text()
-    t1 = con('div.text-01').text()
-    t2 = con('div.text-02').text()
-    html = h2 + '\r\n' + h3 + '\r\n' + p + '\r\n' + t1 + '\r\n' + t2
-    print(html)
+def today_date(rs):
+    time0 = get_today_date()
+    time1 = '2019-7-16'
+    strftime0 = datetime.datetime.strptime(time1, "%Y-%m-%d")
+    strftime1 = datetime.datetime.strptime(time0, "%Y-%m-%d")
+    fg = strftime1 > strftime0
+    if fg == True:
+       print('//////////')
+    pass
+
+
+def run(rs):
+    item = dict()
+    doc = pq(rs)
+    con = doc('div.ywzw_con_inner')
+    p1 = con.children().eq(0).text()
+    h3 = con.children().eq(1).text()
+    p2 = con.children().eq(2).text()
+    p3 = con.children().eq(3).text()
+    p4 = con.children().eq(4).text()
+    p5 = con.children().eq(5).text()
+    html = p1 + '\r\n' + h3 + '\r\n' + p2 + '\r\n' + p3 + '\r\n' + p4 + '\r\n' + p5
+    item['html'] = html
+    item['court_y'] = h3
+    item['release_date'] = re.search('\d{4}-\d{2}-\d{2}', p1).group()
+    print(item)
+
 
     pass
 
 
-today_date(rst)
+run(rst)
