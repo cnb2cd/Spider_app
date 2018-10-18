@@ -78,7 +78,8 @@ class Spider(MainSpider):
                         # 提交
                         self.mysql_client.session_commit()
                     else:
-                        SpiderException("抓取贵州法院公众服务平台,第{}页异常".format(str(form['page'])), self.task_id, url, self.site_name)
+                        SpiderException("抓取贵州法院公众服务平台,第{}页异常".format(str(form['page'])
+                                                                     ), self.task_id, url, self.site_name)
             #
                 except Exception:
                     # 捕获异常
@@ -87,7 +88,8 @@ class Spider(MainSpider):
                 # 目前为测试状态，只抓取前两页内容，正式上线前将break删掉
                 break
         else:
-            SpiderException("抓取贵州法院公众服务平台,第{}页异常".format(str(form['pageIndex'])), self.task_id, url, self.site_name)
+            SpiderException("抓取贵州法院公众服务平台,第{}页异常".format(str(form['pageIndex'])
+                                                         ), self.task_id, url, self.site_name)
         # 关闭数据库链接
         self.mysql_client.session_close()
         log.info("抓取贵州法院公众服务平台结束")

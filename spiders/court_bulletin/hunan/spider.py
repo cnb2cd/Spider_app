@@ -58,7 +58,8 @@ class Spider(MainSpider):
                 page = i
                 try:
                     log.info("开始抓取==============湖南法院网,第{}页".format(page))
-                    url = url = "http://hunanfy.chinacourt.org/article/index/id/M0jONTAwNzAwNCACAAA/page/{}.shtml".format(page)
+                    url = "http://hunanfy.chinacourt.org/article/index/id/M0jONTAwNzAwNCACAAA/page/{}.shtml".format(
+                        page)
                     self.http.http_session(url, "get", headers=self.headers)
                     if self.http.res_code() == 200:
                         html_data = self.http.parse_html()
@@ -69,7 +70,7 @@ class Spider(MainSpider):
                         # 提交
                         self.mysql_client.session_commit()
                     else:
-                        SpiderException("湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
+                        SpiderException("抓取湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
                 except Exception:
                     # 捕获异常
                     m = traceback.format_exc()
@@ -78,7 +79,7 @@ class Spider(MainSpider):
                 break
 
         else:
-            SpiderException("湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
+            SpiderException("抓取湖南法院网,第{}页异常".format(page), self.task_id, url, self.site_name)
         # 关闭数据库链接
         self.mysql_client.session_close()
         log.info("抓取湖南法院网结束")

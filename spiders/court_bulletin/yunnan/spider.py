@@ -27,7 +27,7 @@ headers = {
     "Connection": "keep-alive",
     "Host": "www.ynfy.gov.cn",
     "Pragma": "no-cache",
-    # "Referer": "http://www.ynfy.gov.cn/ktggPage.jspx?channelId=858&listsize=673&pagego=673",
+    # "Referer": "http://www.ynfy.gov.cn/ktgg/index.jhtml",
     "Upgrade-Insecure-Requests": "1",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ("
                   "KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36"
@@ -46,48 +46,48 @@ class Spider(MainSpider):
     def parse(self):
 
         form = {
-            "fyid": "",
-            "page": "1",
-            "kssj": "",
-            "jssj": ""
+            "channelId": "858",
+            "listsize": "673",
+            "pagego": "1"
         }
 
-        url = "http://www.guizhoucourt.cn/ktggSearchResult.jspx"
+        url = "http://www.ynfy.gov.cn/ktggPage.jspx"
         log.info("开始抓取=============={}".format(self.site_name))
-        log.info("开始抓取=============={},第{}页".format(self.site_name, (form['page'])))
+        log.info("开始抓取=============={},第{}页".format(self.site_name, (form['pagego'])))
         self.http.http_requst(url, "post", data=form, headers=self.headers)
         if self.http.res_code() == 200:
             html_data = self.http.parse_html()
             object_list, total_page = self.parse_html(html_data)
-            # log.info("开始存储=============={},第{}页".format(self.site_name, (form['page'])))
-            # # 将对象列表插入数据库
-            # self.mysql_client.session_insert_list(object_list)
-            # # 提交
-            # self.mysql_client.session_commit()
-            # for i in range(2, int(total_page)+1):
-            #     try:
-            #         form["page"] = i
-            #         log.info("开始抓取=============={},第{}页".format(self.site_name, (form['page'])))
-            #         self.http.http_session(url, "post", data=form, headers=self.headers)
-            #         if self.http.res_code() == 200:
-            #             html_data = self.http.parse_html()
-            #             object_list, total_page = self.parse_html(html_data)
-            #             log.info("开始存储=============={},第{}页".format(self.site_name, (form['page'])))
-            #             # 将对象列表插入数据库
-            #             self.mysql_client.session_insert_list(object_list)
-            #             # 提交
-            #             self.mysql_client.session_commit()
-            #         else:
-            #             SpiderException("抓取{},第{}页异常".format(self.site_name, (form['page'])), self.task_id, url, self.site_name)
-            # #
-            #     except Exception:
-            #         # 捕获异常
-            #         m = traceback.format_exc()
-            #         SpiderException(m, self.task_id, url, self.site_name)
-            #     # 目前为测试状态，只抓取前两页内容，正式上线前将break删掉
-            #     break
+            log.info("开始存储=============={},第{}页".format(self.site_name, (form['pagego'])))
+            # 将对象列表插入数据库
+            self.mysql_client.session_insert_list(object_list)
+            # 提交
+            self.mysql_client.session_commit()
+            form["listsize"] = total_page
+            for i in range(2, int(total_page)+1):
+                try:
+                    form["pagego"] = i
+                    log.info("开始抓取=============={},第{}页".format(self.site_name, (form['pagego'])))
+                    self.http.http_session(url, "post", data=form, headers=self.headers)
+                    if self.http.res_code() == 200:
+                        html_data = self.http.parse_html()
+                        object_list, total_page = self.parse_html(html_data)
+                        log.info("开始存储=============={},第{}页".format(self.site_name, (form['pagego'])))
+                        # 将对象列表插入数据库
+                        self.mysql_client.session_insert_list(object_list)
+                        # 提交
+                        self.mysql_client.session_commit()
+                    else:
+                        SpiderException("抓取{},第{}页异常".format(self.site_name, (form['pagego'])), self.task_id, url, self.site_name)
+            #
+                except Exception:
+                    # 捕获异常
+                    m = traceback.format_exc()
+                    SpiderException(m, self.task_id, url, self.site_name)
+                # 目前为测试状态，只抓取前两页内容，正式上线前将break删掉
+                break
         else:
-            SpiderException("抓取{},第{}页异常".format(self.site_name, (form['pageIndex'])), self.task_id, url, self.site_name)
+            SpiderException("抓取{},第{}页异常".format(self.site_name, (form['pagego'])), self.task_id, url, self.site_name)
         # 关闭数据库链接
         self.mysql_client.session_close()
         log.info("抓取结束".format(self.site_name))
@@ -104,39 +104,34 @@ class Spider(MainSpider):
         # 生成文件路径
         file_out(t_way, str(html))
         doc = pq(html)
-        # for page in doc('a').items():
-        #     if page.text() == "末页":
-        #         total_page = "".join(re.findall("\d{1,3}", page.attr.onclick))
-        #
-        # lis = doc('table.tabData a').items()
+        total_page = 10
+        for page in doc('div.turn_page a.zt_02').items():
+            if int(page.text()) > total_page:
+                total_page = int(page.text())
+        lis = doc('ul.sswy_news li').items()
         object_list = list()
-        # for x in lis:
-        #     self.http.http_session(x.attr.href, "get", headers=self.headers)
-        #     html = self.http.parse_html()
-        #     doc = pq(html)
-        #     content = doc('div.print-box')
-        #     item = dict()
-        #     item["taskid"] = self.task_id
-        #     item["release_date"] = "".join(re.findall("发表日期:20\d{2}-\d{1,2}-\d{1,2}", content.text())
-        #                                    ).replace("发表日期:", "")
-        #     item["title"] = x.attr.title
-        #     item["bulletin_way"] = t_way
-        #     item["court_y"] = content('h3').text()
-        #     item["court_t"] = "".join(re.findall("(在.*依法)", content('p').text())).replace("在", ""
-        #                                                                                   ).replace("依法", "")
-        #     item["start_court_t"] = "".join(re.findall("(\d{4}年\d{2}月\d{2}日\s\d{2}时\d{2})", content('p').text())
-        #                                     ).replace("年", "-").replace("月", "-").replace("日", "").replace("时", ":")
-        #     item["court_num"] = "".join(re.findall("(审理.*案件)", content('p').text())
-        #                                 ).replace("审理", "").replace("案件", "")
-        #     item["court_part"] = "".join(re.findall("(在.*依法)", content('p').text())
-        #                                  ).replace("在", "").replace("依法", "")
-        #     item["site_name"] = self.site_name
-        #     # 将item字典映射成对象
-        #     b = BulletinCourt(**item)
-        #     object_list.append(b)
-        # # 返回对象列表和总页数
-        # #     break
-        total_page = 0
+        for x in lis:
+            self.http.http_session(x('a').attr.href, "get", headers=self.headers)
+            html = self.http.parse_html()
+            doc = pq(html)
+            content = doc('div.ywzw_con_inner')
+            item = dict()
+            item["taskid"] = self.task_id
+            item["release_date"] = "".join(re.findall("\d{4}-\d{2}-\d{2}", content('p.p_source ').text()))
+            item["title"] = x('a').attr.title
+            item["bulletin_way"] = t_way
+            item["court_y"] = content('h3.h3_title').text()
+            item["court_t"] = "".join(re.findall("(在.*依法)", content('p').text())).replace("在", ""
+                                                                                          ).replace("依法", "")
+            item["start_court_t"] = "".join(re.findall("\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}", x('a').attr.title))
+            item["court_part"] = "".join(re.findall("(在.*依法)", content('p').text())
+                                         ).replace("在", "").replace("依法", "")
+            item["site_name"] = self.site_name
+            # 将item字典映射成对象
+            b = BulletinCourt(**item)
+            object_list.append(b)
+        # 返回对象列表和总页数
+        #     break
         return object_list, total_page
 
 

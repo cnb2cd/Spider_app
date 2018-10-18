@@ -87,7 +87,8 @@ class Spider(MainSpider):
 
 
         else:
-            SpiderException("抓取河南省高级人民法院,第{}页异常".format(str(form['pagego'])), self.task_id, url, self.site_name)
+            SpiderException("抓取河南省高级人民法院,第{}页异常".format(str(form['pagego'])
+                                                        ), self.task_id, url, self.site_name)
         # 关闭数据库链接
         # self.mysql_client.session_close()
         log.info("抓取河南省高级人民法院结束")
