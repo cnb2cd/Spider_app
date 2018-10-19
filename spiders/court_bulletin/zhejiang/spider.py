@@ -145,5 +145,5 @@ def get_content(content):
 
 if __name__ == "__main__":
 
-    hainan_spider = Spider()
-    hainan_spider.parse()
+    zhejiang_spider = Spider()
+    zhejiang_spider.parse()
