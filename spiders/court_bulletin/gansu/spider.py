@@ -115,7 +115,7 @@ class Spider(MainSpider):
             htm = self.http.parse_html()
             # # 生成文件路径
             t_way = self.task_id + str(time.time()) + '.txt'
-            # # 生成文件路径
+            # 生成文件路径
             file_out(t_way, str(htm))
             doc = pq(htm)
             content = doc('div.text')
@@ -130,6 +130,8 @@ class Spider(MainSpider):
             item["site_name"] = self.site_name
             date = get_today_date()
             if eval("".join(re.findall("\d{4}-\d{2}-\d{2}", x.text())).replace("-", "")) > eval(date):
+                # 生成文件路径
+                file_out(t_way, str(htm))
 
                 # 将item字典映射成对象
                 b = BulletinCourt(**item)
