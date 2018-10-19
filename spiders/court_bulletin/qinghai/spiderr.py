@@ -101,10 +101,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-        # # 生成文件路径
-
-        # 生成文件路径
-
         doc = pq(html)
         # print(doc("td.td_pagebar").text())
         total_page = "".join(re.findall("共\s.*\s页", doc("td.td_pagebar").text())).replace(
