@@ -101,10 +101,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-        # # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
-        # 生成文件路径
-        file_out(t_way, str(html))
         doc = pq(html)
         for page in doc('a').items():
             if page.text() == "末页":
@@ -114,8 +110,12 @@ class Spider(MainSpider):
         object_list = list()
         for x in lis:
             self.http.http_session(x.attr.href, "get", headers=self.headers)
-            html = self.http.parse_html()
-            doc = pq(html)
+            htm = self.http.parse_html()
+            # # 生成文件路径
+            t_way = self.task_id + str(time.time()) + '.txt'
+            # 生成文件路径
+            file_out(t_way, str(htm))
+            doc = pq(htm)
             content = doc('div.print-box')
             item = dict()
             item["taskid"] = self.task_id

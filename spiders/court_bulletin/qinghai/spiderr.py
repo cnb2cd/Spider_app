@@ -102,9 +102,9 @@ class Spider(MainSpider):
         # 解析html
 
         # # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
+
         # 生成文件路径
-        file_out(t_way, str(html))
+
         doc = pq(html)
         # print(doc("td.td_pagebar").text())
         total_page = "".join(re.findall("共\s.*\s页", doc("td.td_pagebar").text())).replace(
@@ -114,13 +114,14 @@ class Spider(MainSpider):
         for x in lis:
             if "开庭" in x.text():
                 self.http.http_session("http://qhfy.chinacourt.org" + x('a').attr.href, "get", headers=self.headers)
-                html = self.http.parse_html()
-                doc = pq(html)
+                htm = self.http.parse_html()
+                doc = pq(htm)
                 content = doc
                 item = dict()
                 item["taskid"] = self.task_id
                 item["release_date"] = "".join(re.findall("\d{4}-\d{2}-\d{2}", content("p").text()))
                 item["title"] = x.text()
+                t_way = self.task_id + str(time.time()) + '.txt'
                 item["bulletin_way"] = t_way
                 item["court_y"] = "".join(re.findall(".{2,10}人民法院", content('span.detail_content').text()))
                 item["court_t"] = "".join(re.findall("(在.{2,10}公开)", content('span.detail_content').text())
@@ -131,6 +132,7 @@ class Spider(MainSpider):
                 item["site_name"] = self.site_name
                 # print(item)
                 if eval(item["release_date"].replace("-", "")) > eval("20180101"):
+                    file_out(t_way, str(htm))
                     # 将item字典映射成对象
                     b = BulletinCourt(**item)
                     object_list.append(b)

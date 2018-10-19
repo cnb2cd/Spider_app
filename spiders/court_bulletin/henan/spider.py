@@ -97,11 +97,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-
-        # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
-        # 将获取的html写入文件
-        file_out(t_way, str(html.encode("utf-8")))
         doc = pq(html)
         total_page = int("".join(re.findall("(共\d{1,2}页)", doc("td.td_pagebar").text())).replace("共", "").replace("页", ""))
         # print(total_page)
@@ -116,6 +111,10 @@ class Spider(MainSpider):
             self.http.http_session(url, "get", headers=self.headers)
             htm = self.http.parse_html()
             doc = pq(htm)
+            # 生成文件路径
+            t_way = self.task_id + str(time.time()) + '.txt'
+            # 将获取的html写入文件
+            file_out(t_way, str(htm.encode("utf-8")))
             content = doc('table.article_content')
             item["taskid"] = self.task_id
             item["release_date"] = "".join(re.findall("\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2}", content(

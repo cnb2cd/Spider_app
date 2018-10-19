@@ -99,10 +99,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-        # # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
-        # 生成文件路径
-        file_out(t_way, str(html))
         doc = pq(html)
         total_page = 10
         for page in doc('div.turn_page a.zt_02').items():
@@ -112,8 +108,12 @@ class Spider(MainSpider):
         object_list = list()
         for x in lis:
             self.http.http_session(x('a').attr.href, "get", headers=self.headers)
-            html = self.http.parse_html()
-            doc = pq(html)
+            htm = self.http.parse_html()
+            # # 生成文件路径
+            t_way = self.task_id + str(time.time()) + '.txt'
+            # 生成文件路径
+            file_out(t_way, str(htm))
+            doc = pq(htm)
             content = doc('div.ywzw_con_inner')
             item = dict()
             item["taskid"] = self.task_id
@@ -127,6 +127,7 @@ class Spider(MainSpider):
             item["court_part"] = "".join(re.findall("(在.*依法)", content('p').text())
                                          ).replace("在", "").replace("依法", "")
             item["site_name"] = self.site_name
+
             # 将item字典映射成对象
             b = BulletinCourt(**item)
             object_list.append(b)

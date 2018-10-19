@@ -88,10 +88,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-        # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
-        # 将获取的html写入文件
-        file_out(t_way, str(html))
         doc = pq(html)
         page_lis = doc('a').items()
         for pag in page_lis:
@@ -105,8 +101,12 @@ class Spider(MainSpider):
             item = dict()
             item["release_date"] = x('span.right').text()
             self.http.http_session("http://hunanfy.chinacourt.org" + x('a').attr.href, "get", headers=self.headers)
-            html = self.http.parse_html()
-            doc = pq(html)
+            htm = self.http.parse_html()
+            # 生成文件路径
+            t_way = self.task_id + str(time.time()) + '.txt'
+            # 将获取的html写入文件
+            file_out(t_way, str(htm))
+            doc = pq(htm)
             content = doc('div.detail')
             item["taskid"] = self.task_id
             item["title"] = content('div.detail_bigtitle').text()

@@ -94,10 +94,6 @@ class Spider(MainSpider):
     def parse_html(self, html):
         # 解析html
 
-        # 生成文件路径
-        t_way = self.task_id + str(time.time()) + '.txt'
-        # 将获取的html写入文件
-        file_out(t_way, str(html))
         doc = pq(html)
         total_page = int(doc('a.zt_02').text()[-3:])
         lis = doc('div.text ul li a').items()
@@ -107,8 +103,12 @@ class Spider(MainSpider):
             # 创建item字典
             item = dict()
             self.http.http_session(x.attr.href, "post", headers=self.headers)
-            html = self.http.parse_html()
-            doc = pq(html)
+            htm = self.http.parse_html()
+            doc = pq(htm)
+            # 生成文件路径
+            t_way = self.task_id + str(time.time()) + '.txt'
+            # 将获取的html写入文件
+            file_out(t_way, str(htm))
             content = doc('div.text')
             item["taskid"] = self.task_id
             item["release_date"] = content('h2').text()[3:13]
